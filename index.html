@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Online Stopwatch - Simple, Free & Easy to Use | Infoicy</title>
+    <meta name="title" content="Online Stopwatch - Simple, Free & Easy to Use | Infoicy">
+    <meta name="description" content="Free online stopwatch with start, stop, and reset functions. Simple, accurate, and easy to use. Perfect for timing activities, workouts, and tasks.">
+    <meta name="keywords" content="stopwatch, online stopwatch, timer, digital stopwatch, free stopwatch, time tracker">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="author" content="Infoicy">
+    <meta name="canonical" content="https://stopwatch.infoicy.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stopwatch.infoicy.com/">
+    <meta property="og:title" content="Online Stopwatch - Simple, Free & Easy to Use | Infoicy">
+    <meta property="og:description" content="Free online stopwatch with start, stop, and reset functions. Simple, accurate, and easy to use. Perfect for timing activities, workouts, and tasks.">
+    <meta property="og:image" content="https://stopwatch.infoicy.com/stopwatch-preview.jpg">
+    <meta property="og:site_name" content="Infoicy Stopwatch">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://stopwatch.infoicy.com/">
+    <meta property="twitter:title" content="Online Stopwatch - Simple, Free & Easy to Use | Infoicy">
+    <meta property="twitter:description" content="Free online stopwatch with start, stop, and reset functions. Simple, accurate, and easy to use. Perfect for timing activities, workouts, and tasks.">
+    <meta property="twitter:image" content="https://stopwatch.infoicy.com/stopwatch-preview.jpg">
+
+    <!-- Mobile Web App -->
+    <meta name="application-name" content="Infoicy Stopwatch">
+    <meta name="apple-mobile-web-app-title" content="Stopwatch">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#f0f0f0">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .stopwatch-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            font-family: monospace;
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #startBtn {
+            background-color: #4CAF50;
+        }
+
+        #stopBtn {
+            background-color: #f44336;
+        }
+
+        #resetBtn {
+            background-color: #2196F3;
+        }
+
+        button {
+            display: none;
+        }
+
+        button.visible {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch-container">
+        <div class="display">00:00:00</div>
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="stopBtn">Stop</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        class Stopwatch {
+            constructor(display) {
+                this.display = display;
+                this.running = false;
+                this.reset();
+                this.updateDisplay();
+            }
+
+            start() {
+                if (!this.running) {
+                    this.running = true;
+                    this.startTime = Date.now() - this.elapsedTime;
+                    this.interval = setInterval(() => this.updateDisplay(), 10);
+                }
+            }
+
+            stop() {
+                if (this.running) {
+                    this.running = false;
+                    clearInterval(this.interval);
+                    this.elapsedTime = Date.now() - this.startTime;
+                }
+            }
+
+            reset() {
+                this.elapsedTime = 0;
+                this.startTime = Date.now();
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                const currentTime = this.running ? Date.now() - this.startTime : this.elapsedTime;
+                const hours = Math.floor(currentTime / 3600000);
+                const minutes = Math.floor((currentTime % 3600000) / 60000);
+                const seconds = Math.floor((currentTime % 60000) / 1000);
+                
+                this.display.textContent = 
+                    `${hours.toString().padStart(2, '0')}:` +
+                    `${minutes.toString().padStart(2, '0')}:` +
+                    `${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // Initialize the stopwatch
+        const display = document.querySelector('.display');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        const stopwatch = new Stopwatch(display);
+
+        // Function to update button visibility
+        function updateButtonVisibility(running, hasElapsedTime) {
+            startBtn.classList.toggle('visible', !running);
+            stopBtn.classList.toggle('visible', running);
+            resetBtn.classList.toggle('visible', hasElapsedTime);
+        }
+
+        // Add event listeners
+        startBtn.addEventListener('click', () => {
+            stopwatch.start();
+            updateButtonVisibility(true, true);
+        });
+
+        stopBtn.addEventListener('click', () => {
+            stopwatch.stop();
+            updateButtonVisibility(false, true);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            stopwatch.stop();
+            stopwatch.reset();
+            updateButtonVisibility(false, false);
+        });
+
+        // Initial button visibility
+        updateButtonVisibility(false, false);
+    </script>
+</body>
+</html>
